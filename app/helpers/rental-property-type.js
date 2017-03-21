@@ -6,8 +6,8 @@ const communityPropertyTypes = [
 	'Apartment'
 ];
 
-export function rentalPropertyType(params/*, hash*/) {
-  if(communityPropertyTypes.include(type)) {
+export function rentalPropertyType([type]/*, hash*/) {
+  if(communityPropertyTypes.includes(type)) {
   	return 'Community';
   };
 
