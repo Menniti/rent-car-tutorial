@@ -1,8 +1,6 @@
 export default function() {
   this.namespace = '/api';
-
-  this.get('/rental', function() {
-    return [{
+    let rentals = [{
         type: 'rentals',
         id: 'grand-old-mansion',
         attributes: {
@@ -12,6 +10,7 @@ export default function() {
           type: 'Estate',
           bedrooms: 15,
           image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Crane_estate_(5).jpg'
+        }
       }, {
         type: 'rentals',
         id: 'urban-living',
@@ -34,8 +33,7 @@ export default function() {
           bedrooms: 3,
           image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg'
         }
-      }]
-    }];
+      }];
 
     this.get('/rentals', function(db, request) {
       if(request.queryParams.city !== undefined) {
@@ -44,9 +42,9 @@ export default function() {
         });
         return { data: filteredRentals };
       } else {
-        return {data: rentals};
+        return { data: rentals };
       }
-    }
+    
   });
 }
 
