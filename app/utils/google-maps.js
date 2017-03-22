@@ -17,7 +17,7 @@ export default Ember.Object.extend({
   pinLocation(location, map) {
   	this.get('geocoder').geocode({address: location}, (result, status) => {
   		if(status === google.maps.GeocoderStatus.OK) {
-  			let geometry = results[0].geometry.location;
+  			let geometry = result[0].geometry.location;
   			let position = { lat: geometry.lat(), lng: geometry.lng() };
   			map.setCenter(position);
   			new google.maps.Marker({position, map, title: location});
