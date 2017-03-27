@@ -1,0 +1,2058 @@
+Tutorial Resumo
+
+==CRIANDO SEU APP ==
+
+ember new SuperRentals
+cd SuperRentals
+
+Directory Structure
+
+|--app
+|--config
+|--node_modules
+|--public
+|--tests
+|--vendor
+
+<other files>
+
+bower.json
+ember-cli-build.js
+package.json
+README.md
+testem.js
+
+
+----------------------------
+
+app: Essa pasta tem:
+	models
+	components
+	routes
+	templates
+	styles
+
+bower.json: Bower é um gerente de dependência. Usado para gerenciar front-end e componentes de (HTML, CSS, Javascript e etc). Todos os componentes do Bower instalaram no diretório bower_components.
+Caso adicionemos dependências como Boostrap, será possível visualiza-lo listado e adicionado no bower_components.
+
+config: Esse diretório tem o enviroment.js onde você poder configurar a settings para o seu app.
+
+node_modules / package.json: Esses diretórios são do NPM. 
+NPM é um gerenciador de pacotes/bibliotecas do NODE.js.
+O ember é construidor com Node e utiliza alguns modulos do Node.js. O package.json contem a lista de dependências do app.
+Todo os add-ons serão mostrados no package.json.
+
+public: Diretório contem asset e estáticos.
+
+vendor: Esse diretório é onde as dependências do front end (Javascript ou CSS) estão localizadas. (Não gerenciado pelo Bower!!)
+
+tests/testem.js: Testes automatizados do nosso app estão na pasta tests, e o teste runner estão configurados em testem.js
+
+ember-cli-build.js: Esse file descrever como Ember Cli deverá criar nosso app.
+
+==/CRIANDO SEU APP==
+
+==ES6 MODULOS==
+
+Olhando app/router.js vocẽ terá esse syntax. 
+
+.............................................
+app/router.js 
+
+	import Ember from 'ember';
+	import config from './config/environment';
+
+	const Router = Ember.Router.extend({
+	  location: config.locationType,
+	  rootURL: config.rootURL
+	});
+
+	Router.map(function() {
+	});
+
+	export default Router;
+.............................................
+
+Ember Cli usa o ECMAScript, onde os modulos são organizados.
+
+Por exemplo: import ember from 'ember';
+nos da acesso as biblitotecas do Ember Framework e joga na variável ember.
+
+Também temos: import config from './config/env/enviroment'; 
+Nos da acesso as configurações de data, na variável config.
+
+const:
+const é a forma de declarar uma variável read-only, para não ser modificada. 
+
+exportando bibliotecas:
+export default Router; Faz a variavel Router, definida nos arquivos de outras partes do app.
+
+==/ES6 MODULOS==
+
+==SERVER DE DESENVOLVIMENTO==
+
+ember server ou ember s
+
+Navegando para o localhost http://localhost:4200 iremos ver a screen padrão.
+Editável em: app/templates/application.hbs, que será refeito por nós.
+
+Removendo o welcome screen. 
+
+abra o file: app/template/application.hbs 
+
+Você verá esse arquivo.
+
+..........................................
+app/template/application.hbs
+	{{!-- The following component displays Ember's default welcome message. --}}
+	{{welcome-page}}
+	{{!-- Feel free to remove this! --}}
+
+	{{outlet}}
+
+..........................................
+
+Deixe ele dessa forma abaixo:
+
+..........................................
+app/template/application.hbs
+
+	{{outlet}}
+..........................................
+
+==/SERVER DE DESENVOLVIMENTO==
+
+==PLANEJANDO SEU APP==
+
+Vamos pensar no que queremos adicionar na nossa home page. 
+
+Queremos:
+	- Mostrar rentals na home page
+	- Link com a informação do about empresa
+	- Link dos contatos
+	- List de retals disponíveis
+	- Filter (Filtro) list de rentals por city
+	- Mostre mais detalhes do rental escolhido
+
+Lembrando: Iremos fornecer os testes no Ember.
+
+RECOMENDÁVEL SEGUIR AS INTRUÇÔES ABAIXO!!
+
+Iremos ensinar automatizar os testes de nossas funções, requestes, front, components, adapters, integração e etc..
+Todos os testes são utilizados para garantir a manutenção saudável do seu software, modificações e melhorias contínuas.
+
+O seu software não depende desses testes para funcionar, ele pode funcionar perfeitamente sem nenhum teste! No entanto qualquer mudança efetuada, você não terá certeza absoluta que está afetando o código restante.
+
+TODAS as Start-ups de tecnologia pedem conhecimento em Test Driven Development (Desenvolvimento guiado por testes).
+
+==/PLANEJANDO SEU APP==
+
+==TESTANDO NOSSA APLICAÇÃO CONFORME AVANÇAMOS==
+
+Nós podemos representar os objetivos do testes de Ember acceptance tests (Aceitação de testes do Ember, significa que é preciso fazer os testes precisarão passar antes de continuarmos desenvolvendo a aplicação).
+
+O Ember Cli, já providencia o framework Qunit, feito em JavaScript, para definir e executar os testes.
+
+Hora de começar-
+
+No seu terminal, digite:
+.....................................................
+:~/SuperRentals/ember g acceptance-test list-rentals
+.....................................................
+g (short) -> generate - serve pra gerar os modulos no ember
+acceptance-test é o nome do modulo gerado pelo seu comando.
+O nome desse módulo recém gerado acceptance-test foi nomeado de list-rentals.
+
+
+O comando irá gerar um arquivo tests/acceptance/list-rentals.js
+.....................................................
+Installing acceptance-test
+	create tests/acceptance/list-rentals-test.js
+.....................................................
+
+Abrindo o arquivo, você irá ver um código inicial, que irá chamar uma rota list-rentals e verificar se a rota foi carregada e está funcionando.
+
+O código já nos auxilia a criar o código corretamente, que é o first acceptance test (primeiro teste de aceitação).
+
+Como não adicionamos nenhuma funcionalidade para nossa aplicação ainda, nós podemos criar o primeiro teste para verificar se o os tests estão funcionando corretamente.
+
+Para isso, realocamos as ocorrencias/chamadas do /list-rentals para gerar um teste com / . O teste irá começar na url base. http://localhost:4200/, e então irá checar a base da pagina, quando estiver 100% carregada.
+
+....................................................
+/tests/acceptance/list-rentals-test.js
+
+	import { test } from 'qunit';
+	import moduleForAcceptance from 'super-rentals/tests/helpers/module-for-acceptance';
+
+	moduloForAcceptance('Acceptance | list-rentals');
+
+	test('visiting /' function(assert) {
+		visit('/');
+	
+		andThen(function() {
+			assert.equal(currentURL(), '/');
+		});
+
+	});
+
+....................................................
+
+Notas para esse teste:
+
+- Acceptance tests (testes de aceitação), são configurados a partir da chamada da função moduleForAcceptance. 
+Essa função garante que a sua aplicação Ember start e stop entre cada testes.
+
+- QUnit passes (Teste unitários), são chamados no objeto assert para cada função do teste. 
+Assert tem funções como equal(), que permite você checar as condições no ambiente de desenvolvimento.
+
+- Ember acceptance tests (testes de aceitação no ember), são usados para ajudar a configurar os testes das funções, fornecendo funções como visit();, andThen() e currentURL()
+
+Agora que temos tudo configurado, deveremos dar start no ember teste --server.
+
+.....................................................
+:~/super_rentals/: ember test --server
+.....................................................
+
+Isso irá rodar os testes pelo Qunit no Chrome ou PhantomJS.
+
+Ele irá mostrar 10 testes executados com sucesso. 
+
+==/TESTANDO NOSSA APLICAÇÂO CONFORME AVANÇAMOS==
+
+
+==ADICIONANDO A SUA APLICAÇÂO OBJETIVOS COMO TESTES DE ACEITAÇÂO==
+
+Como mencionado anteriormente, nosso teste inicial foi feito para garantir que tudo estava rodando corretamente. Agora Vamos substituir o teste por uma lista de tarefas que queremos que nosso app execute.
+
+.....................................................
+/tests/acceptance/list-rentals-test.js
+
+	import { teste } from 'qunit';
+	import moduleForAcceptance from 'super-rentals/tests/helpers/modules-for-acceptance';
+
+	moduleForAcceptance('Acceptance | list-rentals');
+
+	test('should show rentals as the home page', function(assert) {
+
+	});
+
+	test('teste should link information about company', function(assert) {
+
+	}):
+
+	test('should link to a contact information', function(assert){
+
+	});
+
+	test('should list available rentals.', function(assert){
+
+	});
+
+	test('should filter the list of rentals by city.', function(assert){
+
+	});
+
+	test('should shouw details for a select rental', function(assert){
+
+	});
+	
+.....................................................
+
+Agora rodando
+.....................................................
+:~/super_rentals/: ember test --server
+.....................................................
+
+Irá mostrar 7 testes falhando (de 15). Os testes que acabamos de contruir irão falhar. (assert is defined but never used). Eles irão falhar por que o Qunit precisa de pelo menos um teste.(Conhecido como assert).
+
+==/ADICIONANDO A SUA APLICAÇÂO OBJETIVOS COMO TESTES DE ACEITAÇÂO==
+
+==ROTAS e TEMPLATES==
+
+Agora desejamos que quando nossa homepage seja requisitada
+http://localhost:4200/ , seja mostrado a lista de rentals.
+
+De la, desejamos ser capazes de visitar "about" page e "contact" page.
+
+==/ROTAS E TEMPLATES==
+
+==ABOUT ROUTE==
+
+Vamos começar construindo a nossa "about" page.
+
+No ember nós queremos fazer uma nova pagina que será visitada usando URL, nos precisamos gerar uma "route" (rota), utilizando o Ember Cli.
+
+Vamos usar o Ember's route para gerar a nossa "about" route (rota).
+
+....................................................
+ember g route about
+....................................................
+
+*NOTA: 'ember help generate' irá mostrar todos os recursos que você pode criar no Ember.
+
+Após rodar o comando, está aqui o que o generator írá printar.
+
+....................................................
+installing route
+	create app/routes/about.js
+	create app/templates/about.hbs
+updating router
+	add route about
+installing route-test
+	create tests/unit/routes/about-test.js
+....................................................
+
+O Ember route é construído em três partes;
+
+1 - A rota de entrada no router do Ember (/app/router.js), que irá mapear a rota da URL.
+
+2 - A rota que acessa o arquivo, isso acontecerá se a rota for chamada ( app/routes/about.js )
+
+3 - O template da rota, que é onde nós mostramos o conteúdo da pagina. (app/templates/about.hbs)
+
+Abrindo o /app/router.js Nós seremos capazes de ver a rota 'about' sendo chamada: this.route('about') na  função Router.map. 
+A nossa nova linha diz que o ember poderá executar o /app/routes/about.js quando o visitante da pagina carregar o 
+/about.
+
+....................................................
+app/router.js
+
+import ember from 'ember';
+import config from './config/enviroment';
+
+const Router = Ember.Router.extend({
+	location: config.locationType.
+	rootURL: config.rootURL
+});
+
+Router.map(function(){
+	this.route('about');
+});
+
+export default Router;
+....................................................
+
+
+Como nós planejamos mostrar conteúdo static (estáticos) em nossa 'about' page, não iremos modificar nada em /app/routes/about.js. Nós iremos abrir o arquivo /app/templates/about.hbs e adicionar algumas informações sobre o Super Rentals.
+
+....................................................
+app/templates/about.hbs
+	<div class="jumbo">
+		</div class="right tomster"></div>
+		<h2>About Super Rentals</h2>
+		<p>
+			O website Super Rentals é um projeto para explorar o ember.
+			Construindo um site, nós podemos vizualizar a criação de uma aplicação em ember.
+		</p>
+	</div>
+....................................................
+
+Agora run:
+
+.....................................................
+:~/super_rentals/: ember server
+.....................................................
+
+Isso irá carregar seu server e entrando no http://localhost:4200/about você irá vizualizar uma pagina.
+
+
+==/ABOUT ROUTE==
+
+==ROTA CONTACT==
+Agora vamos criar outra rota com os detalhes para a empresa. Novamente vamos gerar a nossa route:
+
+....................................................
+ember generate route contact
+....................................................
+
+E aqui gerador irá printar novamente
+
+....................................................
+installing route
+	create app/templates/contact.hbs
+	create app/routes/contact.js
+Updating
+	add route contact
+instaling route-test
+	create tests/unit/routes/contact-test.js
+....................................................
+
+Essa rota tem as mesmas características mencionadas acima.
+
+1 - No Ember router( /app/router.js), que irá mapear a URL dessa rota.
+
+2 - O a rota de acesso aos arquivos, quando a route é carregada. (app/routes/about.js)
+
+3 - O front da pagina, que será vizualizada quando a pagina for requisitada. (app/templates/about.hbs)
+
+Novamente abrindo o /app/router.js, teremos a linha de código adicionada.
+
+....................................................
+import Ember from 'ember';
+import config from '.config/enviroments';
+
+const Router = Ember.Router.extend({
+	location: config.locationType,
+	rootURL: config.rootURL
+});
+
+Router.map(function(){
+	this.route('about');
+	// Nova linha de código foi adicionada
+	this.route('contact');
+});
+
+export default Router;
+....................................................
+
+Nosso conteúdo é estático, portanto não iremos ajudar a /app/routes/contact.js 
+
+
+Na rota do template..
+Vamos abrir o /app/templates/contact.hbs e adicionar info sobre o 'contact' do Super Rentals:
+
+....................................................
+app/templates/contact.hbs
+
+<div class="Jumbo>
+	<div class="right tomster"></div>
+	<h2>Contact Us</h2>
+	<p>Os representantes de vendas, irão gostar de auxílialo em qualquer dúvida que você tenha.
+	</p>
+	<p>
+		Super Rentals HQ
+		<address>
+			1212 Test Address Avenue<br>
+			Testington, OR 97233
+		</address>
+		<a href="tel:503.44.5253">+1 (503) 44-5253</a><br>
+		<a href="mailto:superrentalsrep@emberjs.com">superrentalsrep@emberjs.com</a>
+	</p>
+</div>
+....................................................
+
+Agora entre no http://localhost:4200/contact e iremos vizualizar a pagina de contato.
+
+==/ROTA CONTACT==
+
+
+==NAVEGANDO COM LINKS E O {{link-to}} HELPER==
+
+Navegar pelo site é mais complexo, para facilitar a vida. Iremos colocar o link do 'contact' page na 'about' page, e vice versa.
+
+Para fazer isso, iremos usar o {{link-to}} helper que o Ember fornece para nós para facilitar o link entre nossas rotas. Vamos ajustar o templates/about.hbs
+
+....................................................
+app/templates/about.hbs
+
+	<div class="Jumbo">
+		<div class="right tomster"></div>
+		<h2>Sobre o Super Rentals</h2>
+		<p>O website Super Rentals é um projeto para explorar o ember.
+			Construindo um site, nós podemos vizualizar a criação de uma aplicação em ember.
+		<p>
+		{{#link-to 'contact' class="button"}}
+			Contato
+		{{/link-to}}
+	</div>
+....................................................
+
+Nessa caso, estamos dizendo para o {{link-to}} helper a rota que nós queremos linkar 'contact'. Quando olhamos para a nossa 'about' page, teremos a opção de direcionar ao 'contact' page, clicando em Contato.
+
+Agora, vamos adicionar o correspondente link na 'contact' page, para podermos retornar a 'about' page.
+
+....................................................
+app/templates/contact.hbs
+
+	<div class="Jumbo">
+		<div class="right tomster"></div>
+		<h2>Contato</h2>
+		<p>Os representantes de vendas, irão gostar de auxílialo em qualquer dúvida que você tenha.
+		</p>
+	{{#link-to 'about' class="button"}}
+		Sobre Nós
+	{{/link-to}}
+	</div>
+....................................................
+
+
+==/NAVEGANDO COM LINKS E O {{link-to}} HELPER==
+
+==A RENTALS ROTA==
+
+Além da page 'about' e 'contact', nós queremos mostrar a lista de rentals para que os nossos visitantes possam olhar.
+
+Vamos adicionar a terceira route chamada rentals:
+
+....................................................
+ember generate route rentals
+....................................................
+
+Isso irá criar
+
+....................................................
+installing route
+	create app/routes/rentals.js
+	create app/templates/rentals.hbs
+updating 
+	add route rentals
+installing route-test
+	create tests/unit/routes/rentals-test.js
+....................................................
+
+Isso irá adicionar no Router.map 
+
+....................................................
+import Ember from 'ember':
+import config from './config/enviroments'
+
+const Router = Ember.Router.extend({
+	location: config.locationType,
+	rootURL: config.rootURL
+});
+
+Router.map(function(){
+	this.route('about');
+	this.route('contact');
+	// e agora adicionada
+	this.route('rentals');
+});
+....................................................
+
+Indo diretamente para o nosso arquivo app/routes/rentals.hbs
+
+Vamos preparar o front da pagina, pra quando nossos usuários entrarem no site.
+
+....................................................
+app/templates/rentals.hbs
+	<div class="Jumbo">
+		<div class="right tomster"></div>
+		<h2>Welcome</h2>
+		<p>Nós queremos que você encontre o local que procura. 		
+		</p>
+		{{#link-to 'about' class='button'}}
+			Sobre nós
+		{{/link-to}}
+	</div>
+....................................................
+
+==/A RENTALS ROTA==
+
+==A INDEX ROTA==
+
+Com as nossas tres rotas 'about', 'contact' e 'rentals' já propriamente configuradas e funcionando. Agora iremos lidar com as requests (requisições), que ocorrem quando o usuário digita a www.retals.com.br.
+Ele é redirecionado para a página inicial do nosso site.
+
+Para isso, existe um route: index
+
+Gerando o route index
+....................................................
+ember generate route index
+....................................................
+
+Print do route generator
+
+....................................................
+installing route
+	create app/routes/index.js
+	create app/templates/index.hbs
+installing route-test
+	create test/unit/routes/index-test.js
+....................................................
+
+A rota 'index' é uma rota especial, ela não requer dar entrada no router mapping. Iremos aprender melhor quando chegarmos em nested routes.
+
+O que nos queremos é: Todos os usuários que entrarem no root ( / ) URL, ele será fará uma transition (transição) para /rentals. 
+
+Para fazer isso, preisamos implementar no file app/routes/index.js uma função chamada beforeModel 
+
+Cada rota tem um "lifecycle hooks", os quais são funções  
+que são invocadas em tempos específicos do carregamento da nossa página. O beforeModel, ele primeiro deixa a página ser renderizada, antes dos dados serem coletados no banco de dados.
+
+Na nosso file app/routes/index.js, iremos chamar a função replaceWith. Essa função é parecida com a trasitionTo. 
+A diferença do replaceWith é que ele irá substituir a URL do browser. Enquanto que o transitionTo irá adicionar a URL na história. Como queremos nosso rentals route pra fornecer a nossa ( / ) 'home' page, nos iremos usar o replaceWith function.
+
+Iremos modificar o nosso index route handler, vamos adicionar o replaceWith, sendo invocado no beforeModel.
+
+...................................................
+app/routes/index.js
+
+import Ember from 'ember';
+export default Ember.Route.extend({
+	beforeModel(){
+		this.replaceWith('rentals');
+	}
+});
+
+...................................................
+
+Agora, visitando a root / o resultado será /rentals no carregamento da URL.
+
+==/A INDEX ROTA==
+
+==ADICIONANDO BANNER COM NAVEGAÇÂO==
+
+Além de adicionarmos links individuais para cada rota do nosso app, nós gostariamos de adicionar uma cabeçalho comum pra todas as paginas, pra mostrar ó rítulo do app e os botões de navegação navbar.
+
+Para mostrar algo em todas as páginas, podemos usar o template inicial (criado anteriormente). (/app/templates/application.hbs) e substitua o arquivo por:
+
+..................................................
+app/templates/application.hbs
+
+<div class="container">
+	<div class="menu">
+		<h1>
+			<em>SuperRentals</em>
+		</h1>
+		{{/link-to}}
+		<div class="links">
+			{{#link-to 'about'}}
+				About
+			{{/link-to}}
+		<div class="links>
+			{{#link-to 'contact'}}
+				Contact
+			{{/link-to}}
+		</div>
+	</div>
+	<div class="body">
+		{{outlet}}
+	</div>
+<div>
+..................................................
+
+Todas funções anteriores nós já vimos com excessão ao 
+{{outlet}}.
+Ele está abaixo de <div class"body">. O {{outlet}} auxília diz o ember a onde o conteúdo da nossa rota 'about' e 'contact' será mostrado ao usuário.
+
+Até esse momento, nós devemos ser capazes de navigar entre o 'about', 'contact' e 'rentals' page.
+
+==/ADICIONANDO BANNER COM NAVEGAÇÂO==
+
+
+==IMPLEMENTANDO TESTES DE ACEITAÇÂO==
+
+No momento já temos várias paginas em nossa aplicação, vamos criar nossos testes para elas.
+
+Como mencionado anteriormente no nosso planejamento da aplicação, o Ember acceptance test irá interagir com o nossa aplicação como se fosse um visitante.
+
+Abrindo o teste de aceitação que criamos /tests/acceptance/list-rentals-test.js, você verá nossos objetivos, que incluirá a navegabilidade na 'about' page e 'contact' page.
+
+Primeiro, vamos testar a página inicial de visita / que é redirecionada para /rentals. Nos testes, usaremos o Ember visit (visitador do ember) a certificar que a / redireciona para o /rentals.
+
+.................................................
+tests/acceptance/list-rentals-test.js
+
+	test('Deverá mostrar o rentals como a home page.', function(assert){
+		visit('');
+		andThen(function(){
+			assert.equal(currentURL(), '/rentals', 'Deverá redirecionar automáticamente')
+		});
+	});
+.................................................
+
+Agora execute os tests criados escrevendo:
+
+.................................................
+ember test --server
+.................................................
+
+Agora teremos 6 testes falhando (5 de acceptance e 1 JSHINT), você também pode executar um único teste chamado "acceptance | list rentals", no drop down input labeled "module" no test UI.
+
+Você pode esconder os testes que estão funcionando se quiser.
+
+==/IMPLEMENTANDO TESTES DE ACEITAÇÂO==
+
+==EMBER TESTE HELPERS==
+
+O Ember fornece uma variaedade de testes de aceitação, para fazer tasks comums fáceis, como as visitas de rotas, preencher fileds, clicar em botoes /links e esperar a pagina carregar.
+
+Alguma funções mais comums.
+	-visit - Carrega a URL fornecida
+	-click - Simula um clique de um usuário em uma parte da tela.
+	-andThen - espera por um commando finalizar para executar a nossa função no nosso teste abaixo.
+	Nós queremos esperar a nossa página para carregar após o click. E assim podemos verificar se a outra página está carregando.
+	-currentURL - retorna a URL (a mesma que estária no browser)
+
+==/EMBER TESTE HELPERS==
+
+
+==TESTES DE VISITA EM NOSSA 'about' e 'contact' PAGES==
+	
+Agora, vamos adicionar os testes que simulam o nosso visitante chegando na nossa homepage, clicando em 'about' e 'contact'.
+
+......................................................
+tests/acceptance/list-rentals-test.js
+	test("Deverá redirecionar para informação 'about' company", function(assert){ 
+		visit('/');
+			click('a:contains("About")');
+			andThen(function(){
+				assert.equal(currentURL(), 'about', "Deverá navegar para a pagina 'about'")
+		});
+	});
+
+
+	test('Deverá redirecionar a informação para o 'contact' page, function(assert){
+		visit('/')
+		click('a:contains("Contact")');
+		andThen(function(){
+			assert.equal(currentURL(), 'contact', "deverá navegar para a página 'contact'")
+		});
+	});
+......................................................
+
+Nos testes acima, usamos o assert.equal(). O assert.equal()
+check dois intems, se o primeiro é igual ao segundo. Se ele não for, retorna teste falso. E o terceiro irá produzir um comentário caso o teste falhe.
+
+In nossos tests, também chamamos dois helpers(visit e click) um depois do outro. O ember faz inumeras coisas quando nós fazemos esses chamadas, ele esconde a parte mais complexas apenas nos dando testes asynchronos test helpers.
+
+......................................................
+ember test 
+......................................................
+
+Após executar o ember testes, você verá os 3 testes passando sem problemas.
+
+==/TESTES DE VISITA EM NOSSA 'about' e 'contact' PAGES==
+
+==O MODEL HOOK (GANCHO)==
+
+Agora vamos adicionar a nossa lista de rentals disponíveis na 'rentals' page.
+
+O Ember mantém os dados na pagina através de um objeto chamado model.
+Para manter as coisas simples no primeiro momento, vamos popular nossa 'rental' list page utilizando um array de objetos em JavaScript. Depois iremos modificar utiliza o Ember Data, para manejar melhor a aplicação.
+
+No Ember, os route handlers (rota manipuladores) são responsáveis por carregar o model com os dados da pagina.
+O a função model funciona como um gancho. Significa que o Ember irá chama-la em diferentes momentos da aplicação. 
+O model function que adicionamos o nosso 'rentals' route handler irá chamar o model, quando algum visitante entrar na URL.  
+http://localhost:4200, or via http://localhost:4200/rentals
+
+Vamos abrir app/routes/rentals.js e retornar o array do rental objects da função model.
+
+.....................................................
+app/routes/rentals.js
+
+	import Ember from 'ember';
+
+	export default Ember.Route.extend({
+		model() {
+			return [{
+				id:'grand-old-mansion',
+				title: 'Grand Old Mansion',
+				owner: 'Veruca Salt',
+				city: 'San Francisco',
+				type: 'Estate',
+				bedrooms: 15,
+				image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Crane_estate_(5).jpg',
+				description: 'This grand old mansion sits on over 100 acres of rolling hills and dense redwood forests.'
+			}, {
+				id:'urban-living',
+				title: 'Urban Living',
+				owner: 'Mike TV',
+				city: 'Seattle',
+				bedrooms: 1,
+				image: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Alfonso_13_Highrise_Tegucigalpa.jpg',
+				description: 'A commuters dream. This rental is within walking distance of 2 bus stops and the Metro.'
+			}, {
+				id: 'downtown-charm',
+				title: 'Downtown Charm',
+				owner: 'Violet Beauregarde',
+				city: 'Portland',
+				type: 'Apartment',
+				bedrooms: 3,
+				image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg',
+				description: 'Convenience is at your doorstep with this charming downtown rental. Great restaurants and active night life are within a few feet.'
+			}];
+		}
+	});
+.....................................................
+
+Olhe aqui, estamos usando o ES6 nétodo definição syntax: model() é o mesmo que escrever model: function().
+
+Ember irá usar o model para retornar e salvar os atributos chamados model, disponível para o rentals template, que nós geramos quando criamos a route templates 'ember generate route rentals'. 
+
+Agora, indo para o nosso template. Podemos usar o atributos do model para mostrar a lista de rentals. Aqui usamos outro Handlebars helper, chamado {{each}}. Ele irá ajudar a criar um loop através de cada um dos rentals objects do nosso model.
+
+.....................................................
+app/templates/rentals.hbs
+	
+	<div class="jumbo">
+		<div class="right tomster"></div>
+		<h2>Bem vindo!</h2>
+		<p>
+			Queremos que você encontre exatamente o que procura.
+		</p>
+		{{#link-to 'about' class="button"}}
+			Sobre nós
+		{{/link-to}}
+	</div>	
+	
+	{{#each model as |rental|}}
+		<article class="listing">
+			<h3>{{rental.title}}</h3>
+			<div class="detail owner">
+				<span>Owner:</span>{{rental.owner}}	
+			</div>
+			<div class="detail type">
+				<span>Type:</span>{{rental.type}}
+			</div>
+			<div class="location type">
+				<span>Location:</span>{{rental.type}}
+			</div>
+			<div class="detail bedrooms">
+				<span>Number of bedrooms:</span> {{rental.bedrooms}}
+			</div>
+		</article>		
+	{{/each}}
+.....................................................
+
+Nesse template, nós fizemos o loop de cada objeto. Em cada interação, o objeto (model -> |rental|) joga os dados na variável rental. 
+
+==/O MODEL HOOK (GANCHO)==
+
+==TESTE DE ACEITAÇÂO DA RENTAL LIST==
+
+Para checaras rentals estão estão listadas corretamenta. Nós iremos criar um teste para visitar o index da rota e checar os resultados mostrando 3 listagems.
+
+Na pasta app/templates/rentals.hbs, nós encapsulamos cada rental mostrado no elemento <article>, e demos uma lista chamada listing. Nós iremos usar essa listing class para achar quantas rentals são mostradas em nossa page.
+
+Para achar os elementos que estejam na class listing, nos iremos usar o test helper chamado find. 
+A função find retorna os elementos que dão match o CSS selector. Nesse caso isso irá retornar o array cm todos os elementos da class listing 
+
+..................................................
+tests/acceptance/list-rentals-test.js
+
+	test('A lista deve mostrar o rentals disponíveis', function(assert) {
+		visit('/');
+		andThen(function() {
+			assert.equal(find('.listing').lenght, 3, 'deve aparecer 3 listagens');
+		});
+	}); 
+...................................................
+
+Rodando os testes novamente usando o comando ember t -s, e a dar uncheck em "Hide passed tests" para mostrar o teste passante.
+
+Agora faltam 2 testes de aceitação e um 1 JSHINT.
+
+==/TESTE DE ACEITAÇÂO DA RENTAL LIST==
+
+==INSTALLING ADDONS==
+
+Ember tem um eco sistema muito rico de ADDons que poderão ser adicionados ao seu projeto facilmente. Os ADDons providenciam uma gama de funcionalisdades ao projeto, salvando muito tempo e deixando nós focarmos no nosso projeto.
+
+Para procurar os addons, visite a pagina do Ember Observer.
+Ele categoriza os addons do ember que são publicados no NPM e fornecem score de cada biblioteca.
+
+Para o Super Rentals, nós teremos a vantagem de adicionar dois addons: ember-cli-tutorial-style e ember-cli-mirage.
+
+==/INSTALLING ADDONS==
+
+==EMBER-CLI-TUTORIAL-STYLE==
+
+Ao invés de você copiar e colar o CSS no style Super Rentals, nós criamos um addon chamado ember-cli-tutorial-style, que instantaneamente adicionará o CSS no tutorial. O Addon funciona como um generate do arquivo chamando ember-tutorial.css e colocamos o file do super-rentals no /vendor diretorio.
+
+O vendor directory no Ember é um diretório que você pode incluir conteúdo sejam compiladas em minha aplicação. Quando Ember CLI constroi nosso app a partir do nosso código-fonte, ele copia o ember-tutorial.css em arquivo chamado vendor.css
+
+Quando o Ember estiver rodando, isso coleta o ember-tutorial CSS file e colocará no vendor.css. O arquivo vendor.css faz referência ao app/index.html, fazendo o style disponível.
+
+Nós criamos novos styles tweaks para vendor/ember-tutorial.css e as mudanças terão efeito quando restartarmos o nosso app.
+
+Execute o comando abaixo para instalar do addon ember-cli-tutorial-style:
+
+Instale o Ember Cli Tutorial Style
+...................................................
+ember install ember-cli-tutorial-style
+...................................................
+
+Desde que ember addons são npm packages, ember irá instalar eles no node_modules diretório, e fazer entrada no package.json. Certifique-se que seu server após o addon tenha sido instalado corretamente. Restartando o server, iremos incorporar o new CSS e recarregar o browser.
+
+==/EMBER-CLI-TUTORIAL-STYLE==
+
+==EMBER-CLI-MIRAGE==
+	
+O Mirage é um client HTTP stubbing biblioteca frequentemente usada para o testes de aceitação (acceptance) do Ember.
+Para o casso desse tutorial, nós usamos mirage para coletar nosso source de dados. Mirage irá permitir criarmos fake data para trablhar enquanto nós desenvolvemos nosso app e mimic executara o server backend.
+
+Instalando o Mirage addon:
+...................................................
+ember install ember-cli-mirage
+...................................................
+
+Vamos configurar o Mirage para enviar de volta ao nosso rentals que nós já definimos acima, dando update no mirage mirage/config.js :
+
+...................................................
+mirage/config.js
+
+	export default function(){
+		this.namespace = '/api';
+
+		this.get('/rentals', function(){
+			return {
+				data:[{
+					type:'rentals',
+					id: 'grand-old-mansion',
+					attributes: {
+						title: 'Grand Old Mansion',
+						owner: 'Veruca Salt',
+						city: 'San Francisco',
+						type: 'Estate',
+						bedrooms: 15,
+						image:
+						'https://upload.wikimedia.org/wikipedia/commons/c/cb/Crane_estate_(5).jpg'
+					}
+				}, {
+					type: 'rentals',
+			        id: 'urban-living',
+			        attributes: {
+			          title: 'Urban Living',
+			          owner: 'Mike Teavee',
+			          city: 'Seattle',
+			          type: 'Condo',
+			          bedrooms: 1,
+			          image: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Alfonso_13_Highrise_Tegucigalpa.jpg'
+					}
+				}, {
+					type: 'rentals',
+			        id: 'downtown-charm',
+			        attributes: {
+			          title: 'Downtown Charm',
+			          owner: 'Violet Beauregarde',
+			          city: 'Portland',
+			          type: 'Apartment',
+			          bedrooms: 3,
+			          image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg'
+			        }
+				}]
+			};
+		});
+	};
+...................................................
+
+Essa configuração do mirage irá retornar em qualquer Ember Data que fizer um GET request para /api/rentals, o Mirage irá retornar um JavaScript como JSON. Para garantir que isso funcione, nos preciamos por padrão fazer requests de /api.
+Sem essa mudança, iriamos conflitar a navegabilidade para a pagina /rentals.
+
+Para fazermos isso, precisamos gerar um adaptador de aplicação (application adapter).
+
+...................................................
+ember generate adapter application
+...................................................
+
+Esse adapter irá extender o JSONAPIAdapter base class do Ember Data.
+
+...................................................
+app/adapters/application.js
+
+	import DS from 'ember-data';
+
+	export default DS.JASONAPIAdapter.extend({
+		namespace: 'api'
+	});
+...................................................
+
+Restart seu server para incluir o mirage na sua aplicação.
+
+
+==/EMBER-CLI-MIRAGE==
+
+==CONSTRUINDO UM SIMPLES COMPONENTE==
+
+Conforme o nosso usuário olha através da nossa lista de rentals, ele talvez queira algum tipo de interação ou mais informações para ajudar a tomar a decisão.
+
+Vamos adicionar a possibilidade dele aumentar a imagem para cada rental. Para isso precisamos usar um componente.
+
+Vamos gerar o rental-listing componente que irá gerenciar o comportamento de cada um de nossos rentals. Um hifen mais outro nome é necessário para evitar conflitos.
+
+rental-listing - OK
+rental - NÂO
+
+...................................................
+ember g component rental-listing
+...................................................
+
+Ember CLI irá gerar alguns arquivos.
+
+...................................................
+installing component
+	create app/components/rental-listing.js
+	create app/templates/components/rental-listing.hbs
+installing component-test
+	create test/integration/components/rental-listing-test.js
+...................................................
+
+O component consiste em duas partes:
+
+ - O template que definine a aparencia do app/templates/components/rental-listing.hbs (Front-End do componente)
+
+ - O JavaScript file (app/components/rental-listing.js) que define como ele irá se comportar.
+
+Nosso novo rental-listing componenet irá gerenciar como o usuário irá visualizar e interagir com o rental. Para dar start, vamos adicionar o source imagem em nosso componente rental-listing.hbs.
+
+Vamos definir o front end que o nosso COMPONENT irá mostrar quando é chamado
+..................................................
+app/templates/componentes/rental-listing.hbs
+
+	<article>
+	+	<img src="{{rental.image}}" alt="">
+		<h3>{{rental.title}}</h3>
+		<div class="detail owner">
+			<span>Owner:</span>{{rental.owner}}
+		</div>
+		<div class="detail type">
+			<span>Type:</span>{{rental.type}}
+		</div>
+		<div class="detail location">
+			<span>Location:</span>{{rental.city}}
+		</div>
+		<div class="detail badrooms">
+			<span>Number of bedrooms:</span>{{rental.bedrooms}}
+		</div>
+	</article>
+
+..................................................
+
+Nós adicionamos a imagem a nossa rental-listing.hbs, agora todas as vezes que esse component for chamado, ele irá aparecer infos de rental.image, owner, location, bedrooms daquele rental (aluguel).
+
+Agora precisamos fazer com que o rental.hbs (Nosso front da home page), chame essa lista para a home page.
+
+Vamos então para a rentals.hbs, e vamos adicionar o chamado dessa lista {{#each}} e vamos remover a nossa lista (anteriormente colocada direto na rentals.hbs) 
+
+..................................................
+app/templates/rentals.hbs
+
+	<div class="jumbo">
+		<div class="right tomster"></div>
+		<h2>Welcome!</h2>
+		<p>
+			Esperamos que você encontre tudo que você procura.
+		</p>
+		{{#link-to 'about' class="button"}}
+			About Us
+		{{/link-to}}
+	</div>
+
++	{{#each model as |rentalUnit|}}
++		{{rental-listing rental=rentalUnit}}
+
+-	{{#each model as |rental|}}
+-		<article class="listing">
+-			<h3>{{rental.title}}</h3>
+-		    <div class="detail owner">
+-		      <span>Owner:</span> {{rental.owner}}
+-		    </div>
+-		    <div class="detail type">
+-		      <span>Type:</span> {{rental.type}}
+-		    </div>
+-		    <div class="detail location">
+-		      <span>Location:</span> {{rental.city}}
+-		    </div>
+-		    <div class="detail bedrooms">
+-		      <span>Number of bedrooms:</span> {{rental.bedrooms}}
+-		    </div>
+-		  </article>
+-	{{/each}}
+..................................................
+
+O que acontece é, quando a pagina rental é chamada
+http://localhost:4200/rentals , ela irá ler o rental.hbs, que irá nós trazer o front end da página.
+
+Ao momento que for lido o código.
+
+..................................................
+{{#each model as |rentalUnit|}
+	{{rental-listing rental=rentalUnit}}
+..................................................
+
+Será chamada o nosso front end rental-listing.hbs E o nosso backend desse componente rental-listing.js, para ser introduzido na página rentals.
+
+Portanto ao momento que invocarmos a rental-listing.hbs, as informações da rental-listing será passada para variável rentalUnit que irá ser mostrada no {{#each}}
+
+==/CONSTRUINDO UM SIMPLES COMPONENTE==
+
+==ESCONDENDO E MOSTRANDO IMAGEM==
+ *******************TUTORIAL V2***************************
+==ESCONDENDO E MOSTRANDO IMAGEM==
+
+==TESTE DE INTEGRAÇÃO==
+ *******************TUTORIAL V2***************************
+==/TESTE DE INTEGRAÇÃO==
+
+==CREATING A HANDLRE BARS HELPERS==
+ *******************TUTORIAL V2***************************
+==/CREATING A HANDLRE BARS HELPERS==
+
+==USANDO EMBER DATA==
+
+Nosso app está usando o hard-code data na nossa rental list (Lista adicionada em um Array), definido no nosso rentals router manipulador (handler).
+
+Para auxiliar nessa tearefa, o Ember tem uma biblioteca cahamda Ember data, que ajuda o dado persistente na nossa aplicação.
+
+O Ember necessita que você define a estrutura de dados que você deseja mostrar na aplicação, exetendendo o DS.MODEL .
+
+Vamos gerar o Ember Data Model do Ember, chamando ele de rental:
+
+.................................................
+ember g model rental
+.................................................
+
+Os resultados da criação do model e do file test:
+
+.................................................
+installing model
+	create app/models/rental.js
+installing model-test
+	create tests/unit/models/rental-test.js
+.................................................
+
+Abrindo o arquivo model, nós podemos ver a classe extendida DS.Model:
+
+.................................................
+app/models/rental.js
+
+	import DS from 'ember-data';
+
+	export default DS.Model.Extend({
+
+	});
+.................................................
+
+Vamos definir a estrutura do nosso rental (aluguel) object usando os mesmo atributos que utilizamos no nosso hard-coded array. 
+JavaScript objects - title, owner, city, type, image, bedrooms e description. 
+Definimos os atributos do objeto apenas fornecendo a função DS.attr() ao objeto.
+
+................................................
+app/models/rental.js
+
+	import DS from 'ember-data';
+
+	export default DS.Model.Extend({
+		title: DS.attr(),
+		owner: DS.attr(),
+		city: DS.attr(),
+		type: DS.attr(),
+		image: DS.attr(),
+		bedrooms: DS.attr(),
+		description: DS.attr()
+	});
+................................................
+
+Agora nós temos o model object que podemos usar o Ember Data.
+
+
+==/USANDO EMBER DATA==
+
+==UPDATING O MODEL HOOK==
+
+Agora para usar o nosso novo Ember Data Model Object, precisamos atualizar o nosso model que definimos anteriormente na nossa route handler. Deletando o hard-code JavaScript Array, e substituindo em nosso manipulador de rotas pelo Ember Data Store service. (Bibloteca que presta serviço de storage.)
+
+O Store service é injetado em todas as rotas e componentes do Ember. Essa a principal interface que você irá interagir com o Ember Data. Nesse caso, chame o findAll function no storage e providencie isso com o nome da sua nova classe rental model class.
+
+................................................
+app/routes/rentals.js
+
+	import Ember from 'ember';
+
+	export default Ember.Route.extend({
+		model() {
+(+)			return this.get('store').findAll('rentals');
+
+(-)
+			return [{
+		      id: 'grand-old-mansion',
+		      title: 'Grand Old Mansion',
+		      owner: 'Veruca Salt',
+		      city: 'San Francisco',
+		      type: 'Estate',
+		      bedrooms: 15,
+		      image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Crane_estate_(5).jpg',
+		      description: "This grand old mansion sits on over 100 acres of rolling hills and dense redwood forests."
+		    }, {
+		      id: 'urban-living',
+		      title: 'Urban Living',
+		      owner: 'Mike TV',
+		      city: 'Seattle',
+		      type: 'Condo',
+		      bedrooms: 1,
+		      image: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Alfonso_13_Highrise_Tegucigalpa.jpg',
+		      description: "A commuters dream. This rental is within walking distance of 2 bus stops and the Metro."
+		    }, {
+		      id: 'downtown-charm',
+		      title: 'Downtown Charm',
+		      owner: 'Violet Beauregarde',
+		      city: 'Portland',
+		      type: 'Apartment',
+		      bedrooms: 3,
+		      image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg',
+		      description: "Convenience is at your doorstep with this charming downtown rental. Great restaurants and active night life are within a few feet."
+		    }];
+(-)
+		}
+	});
+................................................
+
+Tendo nosso arquivo final dessa forma
+
+................................................
+app/routes/rentals.js
+
+	import Ember from 'ember';
+
+	export default Ember.Route.extend({
+		model() {
+			return this.get('store').findAll('rentals');
+		}
+	});
+................................................
+
+Quando chamamos findAll, Ember Data tentará fazer uma solicitação GET para / rentals.
+
+Desde de quando nós criamos o nosso Ember Mirage em nosso ambiente de desenvolvimento. O Mirage irá retornar a data solicitada. Quando nós dermos deploy em nosso server de produção, iremos querer substituir o com o mirage no server remoto, para o Ember Data comunicar com o storing e retreiving os dados gravados. O server remoto irá permitir que os dados sejam compartilhados e atualizados através do usuários.
+
+==/UPDATING O MODEL HOOK==
+
+==CONSTRUINDO UM COMPONENTE COMPLEXO==
+
+Conforme os usuaários procurem por um aluguel (rental), eles também querem pesquisar os hoteis por cidade.
+
+Vamos gerar nosso novo componente. Iremos chamalo de list-filter, afinal nós queremos nosso componente filtrando a lista of rentals baseado no input.
+
+Gerando o componente que filtra a lista
+................................................
+ember g component list-filter
+................................................
+
+installing component list-filter
+	create app/templates/components/list-filter.hbs
+	create app/routes/components/list-filter.js
+installing component list-filter-test
+	create tests/integration/components/list-filter-test.js
+
+Como anteriormente quando nós criamos a rental-listing component. O 'ember generate component list-filter' cria novamente:
+
+
+ - Os manipuladores do front-end (handlebars) (app/templates/components/list-filter.hbs)
+ - JavaScript File (app/components/list-filter.js)
+ - e o componente integration testes (tests/integration/component/list-filter-test.js)
+
+No nosso app/templates/rentals.hbs , nós iremos adicionar a referência do nosso novo list-filter component. 
+
+Iremos embrulhar "wrap" o código de da lista com o novo código de filtro, comentado abaixo.
+
+Isso acontece por que o nosso componente passa "campos" de dada. E ele filtra os resultados da variável inputada pelo usuário rentals.
+
+................................................
+No app/templates/rentals.hbs
+	<div class="jumbo">
+	<div class="right tomster"></div> 
+	<h2>Bem-vindo</h2>
+	<p>
+		Esperamos que você encontre o que procura
+	</p>
+	{{link-to 'about' class="button"}}
+		Sobre nós
+	{{/link-to}}
+	</div>
+	{{#list-filter filter(action 'filterByCity') as |rentals|}}
+		<ul class="results">
+			{{#each rentals as |rentalUnit|}}
+			<li>{{rental-listing rental=rentaUnit}}</li>
+			{{/each}}
+		</ul>
+	{{/list-filter}}
+..................................................
+
+Queremos component forneça campo de entrada e reproduza a lista de resultados, nosso modelo será:
+
+..................................................
+app/templates/components/list-filter.hbs
+
+{{input value=value
+	key-up=(action 'handlerFilterEntry')
+	class="light"
+	placeholder="Filter By City"}}
+{{yield results}}
+
+..................................................
+
+O template contém o {{input}} helper que renderiza um campo de texto, que será o padrão do filtro. O value é o valor do texto mesmo, key-up é a propriedade que irá acionar o handleFilterEntry (Manipulador de Filtro de entrada).
+
+Aqui podemos ir pro lado do  app/components/list-filter.js
+
+..................................................
+app/components/list-filter.js
+
+	import Ember from 'ember';
+
+	export default Ember.Component.extend({
+		classNames: ['list-filter'],
+		value: '',
+
+		init(){
+			this.super(...arguments);
+			this.get('filter')('').then(results() => this.set('results', results));
+		},
+
+		action: {
+			handleFilterEntry(){
+				let filterInputValue = this.get('value');
+				let filterAction = this.get('filter');
+				filterAction(filterInputValue).then(filterResults) => this.set('results', filterResults));
+			}
+		}
+	});
+..................................................
+
+Nós usamos o init hook para alimentar as nossas listas chamando a ação de filtro com valor 'vazio'. Nosso handleFilterEntry action invoca a função chamada filter baseado em valores inputados pelo helper.
+
+O filter function chama o objeto. clousure actions.
+
+Notice: O then chamado pelo filter. O código espera que o filtro retorne a promise. A promise em javascript é a representação de uma função asynchrona. A promise talvez ou não seja processada no momento que você requisitou. Para contar com isso, isso providencia funções, como then que executa quando a resposta do servidor chegar.
+
+Para implementar o filter function para esse filtro de rentals by city, nós iremos criar o rentals controller. Controllers tem ações e propriedades disponíveis no template com todas as rotas correspondentes. No nosso caso, nós queremos gerar o controlador chamando rentals. O ember irá controlar quando o rentals for aplicado na rota.
+
+Gerando o rentals controller route.
+.................................................
+app/controller/rentals.js
+
+	import Ember from 'ember';
+
+	export default Ember.Controller.extend({
+		actions: {
+			filterByCity(param){
+				if (param !== '') {
+					return this.get('store').query('rental', { city: param})
+				} else {
+					return this.get('store').findALL('rental');
+				}
+			}
+		}
+	});
+.................................................
+
+Quando o usuário escrever o texto no nosso component filter, o filterByCity action no controler será chamada. Essa ação toma o valor da value e filtra o rental no registros gravados. Se o texto digitado da match com o texto no banco de dados, ele retorna os resultados.
+
+Para que essa ação aconteça, precisamos modificar o nosso arquivo do Mirage config.js, então podemos responder as nossas queries. Ao invés disso a simplismente retorna a lista de alugueis, nosso Mirage HTTP GET manipulador para rentals, irá retornar os rentals que dão matching com a string inserida pela URL query do parametro city.
+
+.................................................
+mirage/config.js
+
+	export default function() {
+		this.namespace = '/api';
+
+		let rentals = [{
+				type: 'rentals',
+				id: 'grand-old-mansion',
+				attributes: {
+					owner: 'Veruca Salt',
+					city: 'San Francisco',
+					type: 'Estate',
+					bedrooms: 15,
+			        image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Crane_estate_(5).jpg',
+			        description: "This grand old mansion sits on over 100 acres of rolling hills and dense redwood forests."
+			        }
+			}, {
+				type: 'rentals',
+			      id: 'urban-living',
+			      attributes: {
+			        title: 'Urban Living',
+			        owner: 'Mike Teavee',
+			        city: 'Seattle',
+			        type: 'Condo',
+			        bedrooms: 1,
+			        image: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Alfonso_13_Highrise_Tegucigalpa.jpg',
+			        description: "A commuters dream. This rental is within walking distance of 2 bus stops and the Metro."
+			      }
+			    type: 'rentals',
+			      id: 'downtown-charm',
+			      attributes: {
+			        title: 'Downtown Charm',
+			        owner: 'Violet Beauregarde',
+			        city: 'Portland',
+			        type: 'Apartment',
+			        bedrooms: 3,
+			        image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg',
+			        description: "Convenience is at your doorstep with this charming downtown rental. Great restaurants and active night life are within a few feet."
+			    }
+			}];
+		this.get('/rentals', function(db, request) {
+			if(request.queryParams.city !== undefined) {
+				let filteredRentals = rentals.filter(function(i) {
+					return i.attributes.city.toLowerCase().indexOf(request.queryParams.city.toLowerCase()) !== -1;
+				});
+				return { data: filteredRentals };
+			} else {
+				return { data: rentals };
+			}
+		});
+	}
+.................................................
+
+
+Após dar updateing no mirage configurate, restart o server e vamos verificar o teste de integração.
+
+==/CONSTRUINDO UM COMPONENTE COMPLEXO==
+
+==INTEGRATION TEST DO COMPONENTE COMPLEXO==
+
+Agora nós criamos o nosso novo component para filtrar a lista, nos queremos criar um teste para verificar isso.
+Vamos utilizar o component test integration, para verificar o seu comportamento em nossa plrataforma.
+
+Vamos começar abrindo o componente de integração quando nós geramos o list-filter component, tests/integration/components/list-filter-test.js.
+
+Vamos remover o default test, e criar novos testes para verificar o componente que iremos mostrar na lista.
+
+................................................
+tests/integrations/components/list-filter-test.js
+
+	import { moduleForComponent} from 'ember-qunit';
+	import hbs from 'htmlbars-inline-precompile';
+
+	moduleFormComponent('list-filter', 'Integration | Component | filter listing', {
+		integration: true
+	});
+
+	test('deverá iniciar todas as listas de carregamento', function(assert){
+	});
+................................................
+
+
+Nosso list-filter component entrepreta a função como argumento, utilizado para achar a list de rentals baseado na string inputada pelo usuário.
+Nós providenciamos uma ação que seta isso em nosso local teste, basta chamar o this.on.
+
+................................................
+tests/integration/components/list-filter-test.js
+	import { moduleForComponent, test} from 'ember-qunit';
+	import hbs from 'htmlbar-inline-precompile';
+	import RSVP from 'rsvp';
+
+	const ITEMS = [{city: 'San Francisco'}, {city: 'Portland'}, {city: 'Seattle'}];
+	const FILTERED_ITEMS = [{city: 'San Francisco'}];
+
+	modeleFormComponent('list-filter', 'Integration | Component | filter listing', {
+		integration: true
+	});
+
+	test('deverá iniciar o carregamemnto de todas listagens', function(assert){
+		this.on('filteredByCity', (val) => {
+			if(val === ''){
+				return RSVP.resolve(ITEMS);
+			} else {
+				return RSVP.resolve(FILTERED_ITEMS);
+			}
+		});
+	});
+
+................................................
+
+this.on irá fornecer a função de test local no filterByCity, que nós podemos enviar ao component.
+
+Nosso filterByCity function irá filtrar os dados da lista de acordo com o input do this.on.
+
+Para esse caso, se o input for vazio '', o código irá retornar as 3 cidades. Se o input não for vazio, então ele irá retornar apenas o que der match. Se o nosso código estiver correto, ele devará retornar ao display as 3 cidades iniciais e apenas mostrar a uníca que for inputada no search text box.
+
+Nós Não estamos testando apenas a capacidade desse compnent filtrar e sim, estamos testando o component como um todo.
+
+Vamos adicionar agora o componente de renderização para verificar os rentals que retornaram.
+
+.................................................
+tests/integration/components/list-filter-test.js
+
+	import { moduleForComponent, test} from 'ember-qunit';
+	import hbs from 'htmlbars-inline-precompile';
+	import RSVP from 'rsvp';
+
+	const ITEMS = [{city: 'San Francisco'}, {city: 'Portland'}, {city: 'Seattle'}];
+	const FILTERED_ITEMS = [{city: 'San Francisco'}];
+
+	moduleForComponenet('list-filter', 'Integration | Component | filter listing', {
+		integration: true
+	});
+
+	test('deverá inicial carregar toas as listas', function(assert){
+		// Nos queremos que nossas ações retornem como promisses,
+		// desde que eles potencialmente encarar dados asyncronos.
+		this.on('filterByCity', (val) => {
+			if(val === ''){
+				return RSVP.resolver(ITEMS);
+			} else {
+				return RSVP.resolver(FILTERED-ITEMS);
+			}
+		});
+
+	// com a integracao teste.
+	// você poderá setar o seu componente da mesma forma que sua aplicação
+	// irá ser utilizada.
+
+	this.render(hbs`
+		{{#list-filter filter=(action 'filterByCity') as |results|}}
+			<ul>
+			{{#each results as |item|}}
+				<li class="city">
+					{{item.city}}
+				</li>
+			{{/each}}
+			</ul>
+		{{/list-filter}}
+	`);
+	});
+.................................................
+
+Nós finalmente vamos adicionar o wait call no final dos nossos testes.
+
+Ember wait ajuda a esperar por tarefas assincronas completarem a função callback. retornando o promise que irá é respondida do teste.
+
+Se retornar a promisse do Qunit test, O test irá esperar para finalizar antes de ser resolvido. NEsse caso o nosso test completa quando o wait decidir que o processamento foi finalizado, então a funlçao fornecerá o assert que resultará no fechamento do teste.
+
+Veja no código abaixo.
+
+.................................................
+tests/integration/components/list-filter-test.js
+	import { moduleForComponent, test } from 'ember-qunit';
+	import hbs from 'htmlbars-inline-precompile';
+	import wait from 'ember-test-helpers/wait';
+	import RSVP from 'rsvp':
+
+	moduleForComponent('list-filter', 'Integration | Component | filter listing', {
+		integration: true
+	}); 
+
+	const ITEMS = [{city: 'San Francisco'}, {city: 'Portland'}, {city: 'Seattle'}];
+	const FILTERED_ITEMS = [{city: 'San Francisco'}];
+
+	test('deverá iniciar a carregar todas as listas', function (assert) {
+		this.on('filterByCity', (val) => {
+			if (val === '') {
+				return RSVP.resolve(ITEMS);
+			} else {
+				return RSVP.resulve(FILTERED_ITEMS);
+			}
+		});
+		// com o teste de integração
+		// você pode fazer o setup da mesma forma do seu front end
+		// template
+		this.render(hbs`
+			{{#list-filter filter=(action 'filterByCity') as |result|}}
+				<ul>
+				{{#each result as |item|}}
+					<li class="city>
+					{{item.city}}
+					</li>
+				{{/each}}
+				</ul>
+			{{/list-filter}}
+		`);
+
+		return wait().then(() => {
+			assert.equal(this.$('.city').lenght, 3);
+			assert.equal(this.$('.city').first().text().trim(), 'San Francisco');
+		});
+	});
+.................................................
+
+Agora para o nosso segundo teste, iremos checar se o texto filtrato está sendo realmente mostrado na nossa lista.
+
+Iremos forçar essa ação gerando o keyUp event no nosso input field, e então verificar se apenas um foi rendezirado.
+
+.................................................
+tests/integration/components/list-filter-test.js
+	import { moduleForComponent, test } from 'ember-qunit';
+	import hbs from 'htmlbars-inline-precompile';
+	import wait from 'ember-test-helpers/wait';
+	import RSVP from 'rsvp':
+
+	moduleForComponent('list-filter', 'Integration | Component | filter listing', {
+		integration: true
+	}); 
+
+	const ITEMS = [{city: 'San Francisco'}, {city: 'Portland'}, {city: 'Seattle'}];
+	const FILTERED_ITEMS = [{city: 'San Francisco'}];
+
+	test('deverá iniciar a carregar todas as listas', function (assert) {
+		this.on('filterByCity', (val) => {
+			if (val === '') {
+				return RSVP.resolve(ITEMS);
+			} else {
+				return RSVP.resulve(FILTERED_ITEMS);
+			}
+		});
+		// com o teste de integração
+		// você pode fazer o setup da mesma forma do seu front end
+		// template
+		this.render(hbs`
+			{{#list-filter filter=(action 'filterByCity') as |result|}}
+				<ul>
+				{{#each result as |item|}}
+					<li class="city>
+					{{item.city}}
+					</li>
+				{{/each}}
+				</ul>
+			{{/list-filter}}
+		`);
+
+		// The keyUp envet aqui irá envocar a ação que causará
+		// a lista para ser filtrada.
+		this.$('.list-filter input').val('San').keyup();
+
+		return wait().then(() => {
+			assert.equal(this.$('.city').lenght, 3);
+			assert.equal(this.$('.city').first().text().trim(), 'San Francisco');
+		});
+	});
+.................................................
+
+Agora ambos os testes de integração e cenários deveram passar, você podera verificar o ember t -s
+
+==/INTEGRATION TEST DO COMPONENTE COMPLEXO==
+
+==TESTES DE ACEITAÇÂO==
+Agora nós testamos o list-filter component está se comportando como se espera, vamos testar a pagina ela mesmo como ela se comporta com esse novo elemento.
+Vamos verificar que o usuaŕio visita a rentals page e poderá entrar um text no text field e procurar rentals por cidade.
+
+Abrindo nosso existe acceptance test, tests/acceptance/list-rentals-test.js e implementando o test chamado "deverá filtrar a lista de rentals por cidade".
+
+................................................
+/tests/acceptance/list-rentals-test.js
+	test('deverá filtrar a lista de rentals por cidade', function(assert){
+		visit('/');
+		fillIn('.list-filter input', 'Seattle');
+		keyEvent('.list-filter input', 'keyup', 69);
+		andThen(function() {
+			assert.equal(find('.listing').lenght, 1, 'deverá mostrar uma listagem');
+			assert.equal(find('.listing .location:contains("Seattle")').lenght, 1, 'deverá conter apenas uma listam com o local Seattle');
+		});
+	});
+
+................................................
+
+Nos introduzimos dois novos auxiliares no teste. fillIn e keyEvent
+
+- O fillIn ajuda o "fills in" fornecendo o texto dentro do input field para ser fornecido ao seletor (que irá filtrar a palavra)
+- O keyEvent ajuda mandando o input do usuário (key), para simular o usuário.
+
+Em app/componentes/list-filter.js, nós temos o top-level element renderizado pelo componente list-filter. Que nós locamos o search input utilizando o seletor .list-filter input, que nós sabemos que irá dar input no list-filter component.
+
+Nosso test preenche "Seattle" como critério de procura, e o isso envia o keyup evento para o mesmo campo com código 69 e o key simulando o user type.
+
+O teste é aloca os resultados da procura com uma classe chamada listing que será enviar para o nosso rental-listing component.
+
+Como nosso dado foi escrito no hard-cored no Mirage. Nós sabemos que tem apenas 3 deles um com o nome de "Seattle", então a gente assert o número de listagem como um, quando o nome "Seattle" for incluido no test.
+
+Nosso teste verifica duas coisas, quantas listagens tem e se o retorno é 'Seattle' como esperado.
+
+Agora você deverá ver apenas 2 tests falhando. Um deles continua falhando, e o JShint tbm, está não implementado.
+
+==/TESTES DE ACEITAÇÂO==
+
+==SERVICOS E UTILIDADES==
+*************************** TUTORIAL V2 *********************
+
+==/SERVICOS E UTILIDADES==
+
+==ADICIONANDO NESTED ROUTES (ROTAS)==
+
+Até esse ponto, nós geramos quatro top levels routes.
+
+- A 'about' route, que da informação da nossa aplicação
+- O 'contact' route, com informação de como o contato da companhia
+- O 'rentals' que é onde os usuários irão procurar rentals.
+- O index route, que irá redirecionar / -> /rentals route.
+
+Nossa rentals route irá servir multiplas funções. Vindas da nosso teste de aceitação, nós mostramos o que nossos usuários querem abrir o browser e procurar por rentals, assim como ver informação detalhada dos rentals. 
+Para resolver essa necessidade, iremos usar o Ember's nested route capability.
+
+No final dessa sessão, iremos ter criado as seguintes novas routes.
+
+- A rental/index essa ourte irá mostrar a rental page de informação geral, e também a lista de rentals disponíveis. O index nested route é mostrado padrão quando o usuário visita o rentals URL.
+
+- A rentals/show rota que também mostra o rental page geral information, enquanto mostramos os detalhes da informação sobre a selecionada rental(aluguel). O Show irá subistituir pelo id para mostrar o rental escolhido em detalhes.
+(http://localhost:4200/rentals/grand-old-mension).
+
+==/ADICIONANDO NESTED ROUTES (ROTAS)==
+
+==ROTA PAI / PARENT ROUTE==
+
+Anteriormente, as rotas e templates tutorial, nos set up a rentals route.
+
+Abrindo o template para essa route mostra o outlet enbaixo da general route information. você poderá ver {{outlet}}. Ai é onde a nested route sera renderizada.
+
+Template do rental home page
+..........................................
+app/templates/rentals.hbs
+	<div class="jumbo">
+		<div class="right tomster"></div>
+		<h2>Welcome!</h2>
+		<p>
+			Esperamos que você encontre o que procura.
+		</p>
+		{{#link-to 'about' class="button"}}
+			Sobre nós
+		{{/link-to}}
+	</div>
+	{{#list-filter filter=(action 'filterByCity') as |rentals| }};
+		<ul class="results">
+			{{#each rentals as |rentalsUnit|}}
+				<li>{{rental-listing rental=rentalsUnit }}</li>
+		</ul>
+	{{/list-filter}}
+	{{outlet}}
+..........................................
+
+Tendo o parent route significa que qualquer contéudo no nosso parent route irá estar presente sempre que nós vamos formos descendo nas rotas child. permitindo nós a adicionar instruções comums, navegação rodapés e barras laterais.
+
+==/ROTA PAI / PARENT ROUTE==
+
+==GERANDO A NESTED INDEX ROUTE==
+
+Nossa primeira  nested rota será a index route. A index route trabalha similarmente a base index route. (Aquela que transfere / para /rentals). Esse é por default a route que irá renderizar quando a rota for providênciada.
+
+Para criar a index nested route:
+.........................................
+ember g route rentals/index
+.........................................
+
+Installing route rentals/index
+	create app/templates/rentals/index.hbs
+	create app/routes/rentals/index.js
+Installing route-teste
+	create test/unit/routes/index-test.js
+
+Se você abrir o seu Router (app/router.js) você perceber que a linha do rentals modificou. O extra function() {} é necessário por cuasa da child route. O this.route('index', {path='/'}); é fornecido.
+
+.........................................
+app/router.js
+	Router.map(function(){
+		this.route('about');
+		this.route('contact');
+		this.route('rentals', function(){});
+	});
+.........................................
+
+Da mesma forma que nossa aplicação index route não aparece em nosso Router, index routes e sub-routes não aparecerão explicidatamente. O emer saber que esse é a configuração padrão para usar o index route. Entretanto, você poderã customizar essa route se voCê quiser. Por exemplo, você poderá modificar o index route path dessa forma. this.route('rentals', {path="custon-path"}) .
+
+Nessa sessão, usando o Ember Data, precisamos adicionar a chamada para pedir todos os rentals. Vamos implementar nosso novo generate rental/index route, e movivendo o findAll chamado do parent rentals para a nossa nova sub-rota.
+
+........................................
+app/routes/rentals.js
+
+	export default Ember.Route.Extend({
+		model() {
+			return this.get('store').findAll('rental');
+		}
+	});
+........................................
+
+Movendo o código acima, para a nova sub rota
+
+........................................
+app/routes/rentals/index.js
+
+	export default Ember.Route.extend({
+		model (){
+			return this.get('store').findAll('rental');
+		}
+	});
+........................................
+
+Agora nós estamos retornando todas as listas para o nested route's model, agora vamos também mover nossa rental list markup da nossa mains template para nossa index template.
+
+........................................
+app/templates/rentals.hbs
+
+<div class="jumbo">
+	<div class="right tomster"></div>
+	<h2>Welcome!</h2>
+	<p>Nós esperamos que você encontre o que procura</p>
+	{{#link-to 'about' class="button"}}
+		Sobre Nos
+	{{/link-to}}
+</div>
+
+	{{#list-filter filter=(action 'filterByCity') as |rentalUnit|}}
+		<ul class="results">
+			{{#each rentals as |rentalUnit|}}
+				<li>{{rental-listing rental=rentalUnit}}</li>
+			{{/each}}
+		</ul>
+	{{/list-filter}}
+{{outlet}}
+........................................
+
+Movendo o list-filter para o rental/index.hbs
+
+........................................
+app/templates/rentals/index.hbs
+	{{#list-filter filter=(action 'filterByCity') as |rentals|}}
+		<ul class="results">
+			{{#each rental as |rentalUnit|}}
+				<li>{{rental-listing as rental=|rentalUnit|}}</li>
+			{{/each}}
+		</ul>
+	{{/list-filter}}
+
+	{{outlet}}
+........................................
+
+Finalmente precisamos adicionar o nosso controller para que tenhamos a ação do filtro disponível para a nested index route.
+
+Dando start executando.
+........................................
+ember g controller rentals/index
+........................................
+
+Installing controller
+	create app/controller/rentals/index.js
+
+Agora ao invés de copiar tudo do controller do app/controller/rentals.js para app/controller/rentals/index.js, nós podemos apenas aproveitar a vantagem do JavaScript import/export para re-exportar os rentals contrllers como rentals/index controller:
+
+........................................
+app/controllers/rentals/index.js
+
+	import RentalsController from '../rentals';
+
+	export default RentalsController;
+........................................
+
+==/GERANDO A NESTED INDEX ROUTE==
+
+==CONFIGURANDO DADOS PARA NESTED DETAIL ROUTE==
+
+Agora, nós queremos criar uma sub-route que irá mostrar a informação pela específico rental. Para fazer isso, nós precisamos dar update in dois arquivos. Para especifico rental, nós iremos usar o Ember Data's findRecord function.
+Essa função findRecord exige que utilizamos o search por unique key.
+
+Enquanto que a 'show' route, nós iremos mostrar informações adicionais sobre o rental específico.
+
+Com o objetivo de fazer isso, nós precisamos modificar o Mirage config.hs que é o file que adicionamos installando Addons section. Agora nõs vamos adicionar uma novo manipulador de rota (new route handler) para retornar ao rental específico.
+
+......................................
+mirage/config.js
+
+	export default function(){
+		this.namespace = '/api';
+
+		let rentals = [
+		{
+	      type: 'rentals',
+	      id: 'grand-old-mansion',
+	      attributes: {
+	        title: "Grand Old Mansion",
+	        owner: "Veruca Salt",
+	        city: "San Francisco",
+	        type: "Estate",
+	        bedrooms: 15,
+	        image: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Crane_estate_(5).jpg",
+	        description: "This grand old mansion sits on over 100 acres of rolling hills and dense redwood forests."
+      		}
+    	}, {
+	      type: 'rentals',
+	      id: 'urban-living',
+	      attributes: {
+	        title: "Urban Living",
+	        owner: "Mike Teavee",
+	        city: "Seattle",
+	        type: "Condo",
+	        bedrooms: 1,
+	        image: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Alfonso_13_Highrise_Tegucigalpa.jpg",
+	        description: "A commuters dream. This rental is within walking distance of 2 bus stops and the Metro."
+      		}
+    	},  {
+	      type: 'rentals',
+	      id: 'downtown-charm',
+	      attributes: {
+	        title: "Downtown Charm",
+	        owner: "Violet Beauregarde",
+	        city: "Portland",
+	        type: "Apartment",
+	        bedrooms: 3,
+	        image: "https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg",
+	        description: "Convenience is at your doorstep with this charming downtown rental. Great restaurants and active night life are within a few feet."
+      		}
+    	}
+    ];
+    	this.get('rentals', function(db, request){
+    		if(request.queryParams.city !== undefined) {
+    			let filteredRentals = rentals.filter(function (i) {
+    				return i.attributes.city.toLowerCase().indexOf(request.queryParams.city.toLowerCase()) !== -1;
+    			});
+    			return { data: filtredRentals};
+    		} else {
+    			return {data: rentals};
+    		} 
+    	});
+
+    	this.get('/rentals/:id', function(db, request){
+    		return {data: rentals.find((rental) => request.params.id === rental.id)};
+    	});
+	}
+......................................
+
+
+==/CONFIGURANDO DADOS PARA NESTED DETAIL ROUTE==
+
+
+==GERANDO A NESTED DETAIL ROUTE==
+
+Agora, nossa API está pronta para retornar individual rentals, nós podermos gerar o nosso show sub-route. Similar a nossa rentals route, iremos usar o ember g para criar nested route.
+
+.......................................
+ember g route rentals/show
+
+You will see output like this:
+
+installing route
+	create app/routes/rentals/show.js
+	create app/templates/rentals/show.hbs
+updating
+	add route rentals/show
+installing route-test
+	create test/unit/routes/rentals/show-test.js
+.......................................
+
+Vamos dar start olhando para as mudanças em nosso Router (app/router.js)
+
+.......................................
+app/router.js
+
+	Router.map(function(){
+		this.route('about');
+		this.route('contact');
+		this.route('rentals', function(){
+			this.route('show');
+		});
+	});
+....................................... 
+
+Nossa nova rota é nested com o nosso rentals route. Para dizer ao ember que eça é uma sub-route ela será acessada atravéz do localhost:4200/rentals/show . 
+
+Para falar para aplicação qual rental queremos acessar, precisamos substituir na rota show com o ID da rental listing. Então nós vamos mostrar a URL que aparecerá assim: localhost:4200/rentals/id-for-rental.
+
+Para fazer isso, nós modificamos a seguinte route.
+
+.......................................
+app/router.js
+	Router.map(function() {
+		this.route('about');
+		this.route('contact');
+		this route('rentals', function(){
+			this.route('show', {path:'/:rental_id'});
+		});
+	});
+....................................... 
+
+Agora o rental_íd será passado para a route.
+
+==/GERANDO A NESTED DETAIL ROUTE==
+
+==ENCONTRANDO POR ID==
+
+Nós queremos editar o nosso 'show' route para recuperar o rental solicitado:
+
+.......................................
+app/routes/rentals/show.js
+
+	export default Ember.Route.extend({
+		model(params) {
+			return this.get('store').findRecord('rental', params.rental_id);
+		}
+	});
+.......................................
+
+Desde que nós adicionamos a nossa :rental_id para o 'show' path no nosso oruter, o rental_id agora irá ficar disponível em nosso model hook.
+
+Quando nós chamamos:
+this.get('store').findRecord('records', params.rental_id);
+O ember fará queries em /rentals/our-id utilizando o HTTP GET request.
+
+==/ENCONTRANDO POR ID==
+
+==ADICIONANDO RENTAL AO NOSSO TEMPLATE==
+
+Agora nós podemos dar update na nossa show route.
+
+app/templates/rentals/show.hbs e a list de informação do nosso rental.
+
+.......................................
+app/templates/rentals/show.hbs
+	
+	<div class="jumbo show-listing">
+		<h2 class="title">{{model.title}}</h2>
+		<div class="right detail-section">
+			<div class="detail owner>
+				<strong>Owner:</strong> {{model.owner}}
+			</div>
+			<div class="detail">
+				<strong>Type:</strong> {{model.type}}
+			</div>
+			<div class="detail">
+				<strong>Location:</strong> {{model.city}}
+			</div>
+			<div class="detail">
+				<strong>Number of bedrooms:</strong> {{model.bedrooms}}
+			</div>
+			<p class="description">{{model.description}}</p>
+		</div>
+		<img src="{{model.image}}" class="rental-pic">
+	</div>
+.......................................
+
+Agora o browser irá aparecer localhost:4200/rentals/grand-old-mansion e você verá a informação listada do rental específico.
+
+==/ADICIONANDO RENTAL AO NOSSO TEMPLATE==
+
+
+==LIKANDO O RENTAL ESPECÍFICO==
+
+Agora, nós podemos carregar as páginas para rentals individuais, nós iremos adicionar o link (utilizando o link-to helper) com a nossa rental-listing component para navegar para as paginas individuais. Aqui, o link-to helper pega o nome da rota e o rental model object como argumentos.
+
+Quando você passa o objeto como segundo argumento para o link-to bloco, Ele pode default irá serializar o objeto do ID com o model dentro da URL. ou seja irá passar o rental.id.
+
+.......................................
+app/templates/components/rental-listing.hbs
+
+	<article class="listing">
+		<a {{action 'toggleImageSize'}} class="image {{if isWide "wide"}}">
+			<img src="{{rental.image}}" alt="">
+			<small>View Larger</small>
+		</a>
+		<h3>{{#link-to "rentals.show" rental}}
+				{{rental.title}}
+			{{/link-to}}
+		</h3>
+		<div class="detail owner">
+			<span>Owner:</span> {{rental.owner}}
+		</div>
+		<div class="detail type">
+			<span>Type:</span> {{rental.type}}
+		</div>
+		<div class="detail location">
+			<span>Location:</span> {{rental.city}}
+		</div>
+		<div class="detail bedrooms">
+			<span>Number of bedrooms</span> {{rental.bedrooms}}
+		</div>
+		{{location-map location=rental.city}}
+	</article>
+.......................................
+
+Nesse ponto você poderá ir para o deployment para compartilhar o seu Super Rentals Aplication com o mundo, nós esperamos que isso tenha ajudado.
+
+==/LIKANDO O RENTAL ESPECÍFICO==
+
+==TESTES DE ACEITAÇÃO==
+
+Nós queremos veriicar que nós podermos clicar em um especific rental e ele será carregado detalhadamente na view da pagina.
+Quando clicamos no titulo, ele irá expandir o rental como mostrado.
+
+........................................
+/tests/acceptance/list-rentals-test.js
+
+	test('deverá mostrar detalhes para o rental específico', funcion (assert) {
+		visit('/rentals');
+		click('a:contains("Grand Old Mansion")');
+		andThen(function() {
+			assert.equal(currentURL(), 'rentals/grand-old-mansion', 'Isso deverá navegar para a show route');
+			assert.equal(find('.show-listing h2').text(), "Grand Old Mansion", 'deverá listar a rental title');
+			assert.equal(find('.description').length, 1, 'deverá listar a descrição da propriedade');
+		});
+	});
+........................................
+
+==/TESTES DE ACEITAÇÃO==
